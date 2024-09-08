@@ -44,13 +44,43 @@ console.log(db.get(3))
 
 
 //REST API 설계
-app.get('/youtubers' , function (req, res) {
-  res.json({
-    message : "test"
+app.get('/youtubers', function (req, res) {
+    
+  //강의에서 날리고 // 
+  /*db.forEach(function(youtuber) {
+    console.log(youtuber)
+  })*/
+
+    /*var jsonObject = {} 
+    db.forEach(function(value, key){
+    jsonObject[key] = value
+    }); 이부분을 아래처럼 수정*/
+
+  
+    /*var youtubers = {} 
+      db.forEach(function(youtuber){
+      jsonObject[youtuber.channelTitle] = youtuber
+    });*/
+    var youtubers = {} 
+    db.forEach(function(value, key){
+    youtubers[key] = value
+  });
+
+  res.json(youtubers)
+
+  // forEach를 json으로 변환 Map to JSON에서 JSON.stringify() 메서드 사용 
+  /*detail.forEach((value, key) => {jsonObject[key] = value});
+  console.log(JSON.stringify(jsonObject))*/
+
+   // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ//
+    /*console.log(db.set())
+    console.log(db.values())*/  
+    //ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+    //res.json(db.values())
+        
   })
 
-})
-app.get('/youtuber/:id', function (req, res) {
+app.get('/youtubers/:id', function (req, res) {
     let {id} = req.params
     id = parseInt(id)
     
@@ -70,7 +100,7 @@ app.get('/youtuber/:id', function (req, res) {
 
 
 app.use(express.json()) //http 외 모듈인 '미들웨어' : json 설정
-app.post('/youtuber', (req, res) => {
+app.post('/youtubers', (req, res) => {
    // body에 숨겨져서 들어온 데이터를 화면에 뿌려볼까?
    // postman이 해결해주신다 걱정말어라
 
@@ -84,6 +114,81 @@ app.post('/youtuber', (req, res) => {
   })
 })
 
+// 개별 유튜버 삭제
+app.delete('/youtubers/:id', function(req, res) {
+  let {id} = req.params
+  id = parseInt(id)
+  
+  var youtuber = db.get(id)
+  if (db.get(id) == undefined) {
+
+    res.json({
+      message : `요청하신 ${id}번은 없는 유튜버.`
+    })
+    
+  } else {
+
+    const channelTitle = youtuber.channelTitle
+  db.delete(id)
+
+  res.json({
+    message : `${channelTitle}__님, 행복하세요.`
+  })
+
+  }
+
+
+});
+
+//전체 삭제 유튜버
+app.delete('/youtubers', function (req, res) {
+  
+  var msg = ""
+  //db에 값이 1개 이상이면 , 전체삭제
+  if (db.size >= 1 ) { 
+
+    db.clear()
+  
+    msg = "전체 유튜버가 삭제"
+
+  } else { // 값이 없으면
+      msg = "삭제할 유튜버가 없습니다."
+  }
+
+    res.json({
+      message : msg
+
+    })
+  // 값이 없으면 , "삭제할 유튜버가 없습니다."
+   
+  })
+
+  // 개별유튜버 수정
+app.put('/youtubers/:id', function(req, res) {
+    
+  let {id} = req.params
+  id = parseInt(id)
+  
+  var youtuber = db.get(id)
+  var oldTitle = youtuber.channelTitle
+  if (db.get(id) == undefined) {
+
+    res.json({
+      message : `요청하신 ${id}번은 없는 유튜버.`
+    })
+    
+  } else {
+    var newTitle = req.body.channelTitle
+    
+    youtuber.channelTitle = newTitle
+    db.set(id, youtuber)
+    res.json({
+      message : `${oldTitle}님, 채널명이 ${newTitle}로 수정 되었습니다.`
+  })
+
+  }
+  
+})  
 
 /*app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
