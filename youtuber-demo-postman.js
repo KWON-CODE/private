@@ -62,6 +62,22 @@ app.get('/youtubers', function (req, res) {
       jsonObject[youtuber.channelTitle] = youtuber
     });*/
     var youtubers = {} 
+
+    console.log(db)
+
+    if (db.size !== 0) {
+      db.forEach(function(value, key){
+        youtubers[key] = value
+      });
+    
+      res.json(youtubers)
+
+    } else {
+      res.status(404).json({
+        message : "조회할 유튜버가 없습니다."
+      })
+    }
+
     db.forEach(function(value, key){
     youtubers[key] = value
   });
@@ -86,7 +102,7 @@ app.get('/youtubers/:id', function (req, res) {
     
     const youtuber = db.get(id)
     if (youtuber == undefined) {
-      res.json({
+      res.status(404).json({
         message : "유튜버 정보를 찾을 수 없다."
 
 
@@ -101,17 +117,31 @@ app.get('/youtubers/:id', function (req, res) {
 
 app.use(express.json()) //http 외 모듈인 '미들웨어' : json 설정
 app.post('/youtubers', (req, res) => {
-   // body에 숨겨져서 들어온 데이터를 화면에 뿌려볼까?
+    const channelTitle = req.body.channelTitle
+    if (channelTitle) {
+
+      db.set(id++, req.body)
+
+      res.status(201).json({
+        message : `${db.get(id-1).channelTitle}님, 유튜버 생활을 응원합니다.`
+    })
+    } else {
+      res.status(400).json({
+        message : "요청 값을 제대로 보내주세요."
+      })
+    }
+  
+  // body에 숨겨져서 들어온 데이터를 화면에 뿌려볼까?
    // postman이 해결해주신다 걱정말어라
 
    console.log(req.body)
    // 등록..? Map(db)에 저장(put) 해야한다.
-   db.set(id++, req.body)
+  // db.set(id++, req.body)
 
   //res.json(req.body) // <<body에 숨겨져서 들어온 데이터를 화면에 뿌려
-  res.json({
-      message : `${db.get(id-1).channelTitle}님, 유튜버 생활을 응원합니다.`
-  })
+  // res.json({
+  //     message : `${db.get(id-1).channelTitle}님, 유튜버 생활을 응원합니다.`
+  // })
 })
 
 // 개별 유튜버 삭제
@@ -122,7 +152,7 @@ app.delete('/youtubers/:id', function(req, res) {
   var youtuber = db.get(id)
   if (db.get(id) == undefined) {
 
-    res.json({
+    res.status(404).json({
       message : `요청하신 ${id}번은 없는 유튜버.`
     })
     
@@ -143,16 +173,21 @@ app.delete('/youtubers/:id', function(req, res) {
 //전체 삭제 유튜버
 app.delete('/youtubers', function (req, res) {
   
-  var msg = ""
+  //var msg = ""
   //db에 값이 1개 이상이면 , 전체삭제
   if (db.size >= 1 ) { 
 
     db.clear()
-  
-    msg = "전체 유튜버가 삭제"
+    res.json({
+      message : "전체 유튜버가 삭제 되었음"
+    })
+   // msg = "전체 유튜버가 삭제"
 
   } else { // 값이 없으면
-      msg = "삭제할 유튜버가 없습니다."
+     // msg = "삭제할 유튜버가 없습니다."
+     res.status(404).json({
+        message : "삭제할 유튜버가 없음"
+     })
   }
 
     res.json({
@@ -170,8 +205,12 @@ app.put('/youtubers/:id', function(req, res) {
   id = parseInt(id)
   
   var youtuber = db.get(id)
-  var oldTitle = youtuber.channelTitle
-  if (db.get(id) == undefined) {
+  if (youtuber) {
+    const channelTitle = youtuber.channelTitle
+    db.delete(id)
+  
+    // var oldTitle = youtuber.channelTitle
+  //if (db.get(id) == undefined) {
 
     res.json({
       message : `요청하신 ${id}번은 없는 유튜버.`
