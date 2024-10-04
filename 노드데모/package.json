@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "figlet": "^1.7.0",
+    "is-odd-num": "^1.1.1",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
