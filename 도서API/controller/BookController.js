@@ -1,14 +1,33 @@
 const conn = require('../mariadb'); // db모듈
 const {StatusCodes} = require('http-status-codes'); // status code 모듈
 
-
+// (카테고리별, 신간여부) 전체 도서 목록 조회 
 const allBooks = (req,res) => {
-    let {category_id} = req.query;
+    let { category_id, news, limit, currentPage } = req.query;
 
-    if(category_id) {
-        // 카테고리 별 조회
-        let sql = "SELECT * FROM books WHERE category_id=?";
-    conn.query(sql, category_id,
+    // limit : page 당 도서 수 ex. 3
+    //currentPage : 현재 몇 페이지 ex. 1,2,3 ...
+    //offset :                      0, 3, 6, 9, ....
+    //                        3 * 0 = 0    3 * 1 = 3
+    //                            limit * (currentPage-1)
+    let offset = limit * (currentPage-1);
+    
+    let sql = "SELECT * FROM books";
+    let values = [];
+    if(category_id&&news) {
+        sql += " WHERE category_id=? AND pub_date BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()";
+        values = [category_id];
+    } else if(category_id) { 
+        sql += " WHERE category_id=?";
+        values = [category_id];
+    } else if(news) {
+        sql += " WHERE pub_date BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()";
+    }
+
+    sql += " LIMIT ? OFFSET ?";
+    values.push(parseInt(limit), offset);
+
+    conn.query(sql, values,
         (err, results) => {
             if(err) {
                 console.log(err);
@@ -20,25 +39,15 @@ const allBooks = (req,res) => {
                 return res.status(StatusCodes.NOT_FOUND).end();
         });
 
-    } else {
-            // (요약된) 전체 도서 리스트
-        let sql = "SELECT * FROM books";
-        conn.query(sql, (err, results) => {
-                if(err) {
-                    console.log(err);
-                    return res.status(StatusCodes.BAD_REQUEST).end(); 
-                }
-            return res.status(StatusCodes.OK).json(results);
-            })
-    }
-    
    
 };
 
 const bookDetail = (req,res) => {
     let {id} = req.params;
 
-    let sql = "SELECT * FROM books WHERE id=?";
+
+    let sql = `SELECT * FROM books LEFT JOIN category
+     ON books.category_id = category_id WHERE books.id=?;`;
     conn.query(sql, id,
         (err, results) => {
             if(err) {
