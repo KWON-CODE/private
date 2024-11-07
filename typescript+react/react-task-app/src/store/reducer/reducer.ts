@@ -1,7 +1,9 @@
 
 // Redux
 
+import { boardsReducer } from "../slices/boardsSlice";
 import { loggerReducer } from "../slices/loggerSlice";
+import { modalReducer } from "../slices/modalSlice";
 
 // 상태 관리 라이브러리 (선택사항)
 
