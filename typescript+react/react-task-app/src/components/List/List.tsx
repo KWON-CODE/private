@@ -9,6 +9,7 @@ import { deleteList, setModalActive } from '../../store/slices/boardsSlice';
 import { v4 } from 'uuid';
 import { setModalData } from '../../store/slices/modalSlice';
 import { deleteButton, listWrapper, name } from './List.css';
+import { addLog } from '../../store/slices/loggerSlice';
 
 type TListProps = {
   boardId: string;
@@ -71,7 +72,9 @@ const handleListDelete = (listId: string) =>{
           </div>
 
         ))}
-        <ActionButton />
+        <ActionButton
+         boardId={boardId} 
+         listId={list.listId} />
     </div>
   )
 }

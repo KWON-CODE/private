@@ -26,7 +26,11 @@ const ListsContainer: FC<TListsContainerProps> = ({
            />
         ))
       }
-      <ActionButton />
+      <ActionButton 
+        boardId={boardId}
+        listId={""}
+        list
+      />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ITask } from "../../types";
 
 type TSetModalDataAction = {
@@ -37,5 +37,5 @@ const modalSlice = createSlice({
     }
 })
 
-export const {setModalData} = modalSlice.actions;
+export const { setModalData } = modalSlice.actions;
 export const modalReducer = modalSlice.reducer;
