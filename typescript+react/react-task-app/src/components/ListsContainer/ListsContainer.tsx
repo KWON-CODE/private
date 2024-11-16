@@ -8,7 +8,6 @@ import List from '../List/List';
 type TListsContainerProps = {
   boardId: string;
   lists: IList[];
-
 }
 
 const ListsContainer: FC<TListsContainerProps> = ({

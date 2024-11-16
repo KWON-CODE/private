@@ -10,6 +10,7 @@ import { v4 } from 'uuid';
 import { setModalData } from '../../store/slices/modalSlice';
 import { deleteButton, listWrapper, name } from './List.css';
 import { addLog } from '../../store/slices/loggerSlice';
+import { Droppable } from 'react-beautiful-dnd';
 
 type TListProps = {
   boardId: string;
@@ -47,7 +48,11 @@ const handleListDelete = (listId: string) =>{
   }
 
   return (
+    <Droppable droppableId={list.listId}>
+      {provided => (      
     <div
+        {...provided.droppableProps}
+        ref={provided.innerRef}
       className={listWrapper}
     >
         <div /*className={header}*/>
@@ -70,12 +75,14 @@ const handleListDelete = (listId: string) =>{
               index={index}
             />
           </div>
-
         ))}
+        {provided.placeholder}
         <ActionButton
          boardId={boardId} 
          listId={list.listId} />
     </div>
+    )}
+    </Droppable>
   )
 }
 
