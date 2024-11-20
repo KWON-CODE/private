@@ -1,14 +1,16 @@
 import{ styled } from "styled-components";
+import ThemeSwitcher from "../header/ThemeSwitcher";
 
 function Header() {
     return(
-        <Headerstyle>
+        <HeaderStyle>
             <h1> book store </h1>
-        </Headerstyle>
+            <ThemeSwitcher />
+        </HeaderStyle>
     );
 }
 
-const Headerstyle = styled.header `
+const HeaderStyle = styled.header `
     background-color: ${({ theme }) => theme.color.background};
    
     h1 {
