@@ -42,9 +42,9 @@ interface Theme {
 export const light: Theme = {
     name: 'light',
     color: {
-        primary: "brown",
+        primary: "#ff5800",
+        secondary: "#5F5F5F",
         background: "lightgrey",
-        secondary: "blue",
         third: "green",
         border: "grey",
         text: "black"
