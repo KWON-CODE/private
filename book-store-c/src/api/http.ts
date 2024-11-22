@@ -1,8 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios';
 
-const BASE_URL = 'http://localhost:3000';
-const DEFAULT_TIMEOUT = 30000;
-
+const BASE_URL = "http://localhost:9999";
+const DEFAULT_TIMEOUT = 3000000;
 export const createClient = (config?: AxiosRequestConfig) => 
     {
         const axiosInstance = axios.create({
@@ -23,6 +22,8 @@ export const createClient = (config?: AxiosRequestConfig) =>
                 return Promise.reject(error);
             }
         );
+
+       
 
         return axiosInstance;
 };

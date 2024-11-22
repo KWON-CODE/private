@@ -5,9 +5,9 @@ interface RouteError {
     message?: string;
 }
 
-
 function Error() {
     const error = useRouteError() as RouteError;
+    
     return (
         <div>
             <h1>오류가 발생했습니다.</h1>
