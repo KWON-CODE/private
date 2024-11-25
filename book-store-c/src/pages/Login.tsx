@@ -20,7 +20,7 @@ function Login() {
     const showAlert = useAlert();
 
     const {isloggedIn, storeLogin, storeLogout} = 
-    useAuthStore()
+    useAuthStore();
    
     const { 
         register,
@@ -39,11 +39,12 @@ function Login() {
             console.log(res.token);
             showAlert("로그인이 완료되었습니다.");
             navigate('/');
-        });
-    };
+        }, (error) => {
+            showAlert("로그인 실패했습니다.");
+        }
+    );
+};
 
-
-    console.log(isloggedIn);
 
     return (
         <>
