@@ -1,11 +1,10 @@
 import styled from "styled-components"
 import Title from "./Title";
-import { Link } from "react-router-dom";
 
 interface Props {
     icon?: React.ReactNode;
     title: string;
-    description: React.ReactNode;
+    description?: React.ReactNode;
 }
 
 
