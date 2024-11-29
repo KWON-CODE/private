@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components"
 import Title from "../Components/common/Title";
 import { CartStyle } from "./Cart";
@@ -7,18 +7,24 @@ import Button from "../Components/common/Button";
 import InputText from "../Components/common/InputText";
 import { useForm } from "react-hook-form";
 import { Delivery, OrderSheet } from "../models/order.model";
+import FindAddressButton from "../Components/order/FindAddressButton";
+import { useAlert } from "../hooks/useAlert";
+import { order } from "../api/order.api";
 
 interface DeliveryForm extends Delivery {
     addressDetail: string;
 }
 
 function Order () {
+    const { showAlert, showConfirm } = useAlert();
    const location = useLocation();
+   const navigate = useNavigate()
    const orderDataFromCart = location.state;
    const { totalQuantity, totalPrice, firstBookTitle } = orderDataFromCart;
 
    const { register,
-            handleSubmit, 
+            handleSubmit,
+            setValue, 
             formState: { errors } }
    = useForm<DeliveryForm>();
 
@@ -30,8 +36,15 @@ function Order () {
                 address: `${data.address} ${data.addressDetail}`
             }
         }
-        //서버로 넘겨준다.
-        console.log(orderData);
+
+        showConfirm("주문을 진행하시겠습니까?", () => {
+            //서버로 넘겨준다.
+            // console.log(orderData);
+            order(orderData).then(() => {
+                showAlert("주문이 처리 되었습니다.");
+                navigate('/orderlist');
+            }); 
+        });
     };
 
     return (
@@ -49,9 +62,7 @@ function Order () {
                         <div className="input">
                             <InputText inputType="text" {...register("address", { required: true })} />
                         </div>
-                        <Button size="medium" scheme="normal">
-                            주소 찾기 
-                        </Button>
+                        <FindAddressButton onCompleted={(address) => {setValue('address', address)}} />
                     </fieldset>
                     {errors.address && <p className="error-text"> 주소를 입력해 주세요</p>}
                     <fieldset>
