@@ -5,23 +5,16 @@ import { Pagination } from "../models/pagination.model";
 import { QUERYSTRING } from "../constants/querystring";
 import { LIMIT } from "../constants/pagination";
 import { fetchBooks } from "../api/books.api";
+import { useQuery } from "react-query";
+
 
 export const useBooks = () => {
     const location = useLocation();
 
-    const [books, setBooks] = useState<Book[]>([]);
-    const [pagination, setPagination] = useState<Pagination>({
-        totalCount: 0,
-        currentPage: 1
-    });
+    const params = new URLSearchParams(location.search);
 
-    const [isEmpty, setIsEmpty] = useState(true);
-
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-
-
-        fetchBooks({
+    const { data: booksData, isLoading: isBooksLoading } = useQuery(["books", location.search], 
+        () => fetchBooks({
             category_id: params.get(QUERYSTRING.CATEGORY_ID) ? 
             Number(params.get(QUERYSTRING.CATEGORY_ID)) :
              undefined,
@@ -30,12 +23,26 @@ export const useBooks = () => {
             currentPage: params.get(QUERYSTRING.PAGE) ? Number
             (params.get(QUERYSTRING.PAGE)) : 1,
             limit: LIMIT,
-        }).then(({ books, pagination }) => {
-            setBooks(books);
-            setPagination(pagination);
-            setIsEmpty(books.length === 0);
-        });
-    }, [location.search]);
+        }) )
 
-    return { books, pagination, isEmpty }; 
+   return {
+    books: booksData?.books,
+    pagination: booksData?.pagination,
+    isEmpty: booksData?.books.length === 0,
+    isBooksLoading,
+   };
 };
+
+
+// 결과 = {
+//     books, pagination
+// }
+
+
+// 결과 {
+//     pages: [
+//         {books, pagination},
+//         {books, pagination},
+//         {books, pagination},
+//     ]
+// }

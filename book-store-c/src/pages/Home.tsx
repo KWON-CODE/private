@@ -1,6 +1,8 @@
 import Title from "../Components/common/Title";
 import Button from "../Components/common/Button";
 import InputText from "../Components/common/InputText";
+import styled from "styled-components";
+
 
 function Home() {
     return(
@@ -17,4 +19,7 @@ function Home() {
     );
     
 }
+
+const HomeStyle = styled.div``;
+
 export default Home;
